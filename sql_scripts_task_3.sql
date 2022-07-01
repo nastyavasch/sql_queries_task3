@@ -86,16 +86,17 @@ FROM customer cust
 INNER JOIN address a ON cust.address_id  = a.address_id
 INNER JOIN city c ON c.city_id = a.city_id
 GROUP BY c.city_id
-ORDER BY inactive_count DESC;
+ORDER BY inactive_count DESC, c.city;
 
 
 --Вывести категорию фильмов, у которой самое большое кол-во часов суммарной аренды в городах
 --(customer.address_id в этом city),и которые начинаются на букву “a”.
 -- То же самое сделать для городов в которых есть символ “-”. Написать все в одном запросе.
 
+
 SELECT cat."name" AS category_name,
 		c.city, 
-		sum(date_part('hour',r.return_date - r.rental_date)) AS rent_hours 
+		round(sum(EXTRACT(epoch FROM r.return_date - r.rental_date)/3600),2) AS rent_hours 
 FROM film f
 INNER JOIN film_category fc ON fc.film_id = f.film_id 
 INNER JOIN category cat ON cat.category_id = fc.category_id 
